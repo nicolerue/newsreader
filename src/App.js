@@ -1,23 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
-
+import Header from "./Components/Header";
+import Display from "./Components/Display";
+import ArticleCard from "./Components/ArticleCard";
+import { articlesData } from "./Data/articles";
+import { useEffect, useState } from "react";
+import "./App.css";
+import { getArticles } from "./apiCalls";
 function App() {
+  const [articles, setArticles] = useState();
+  const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       await new Promise((resolve) => setTimeout(resolve, 1000));
+  //       setArticles(articlesData);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error fetching:", error);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  // if (loading) {
+  //   return <p>Loading...</p>;
+  // }
+
+  useEffect(() => {
+    getArticles()
+      .then((data) => {
+        setArticles(data.articles);
+        console.log(data.articles);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Header />
+      <Display articles={articles} />
     </div>
   );
 }
